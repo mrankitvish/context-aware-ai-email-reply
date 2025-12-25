@@ -1,0 +1,5 @@
+.conda/
+__pycache__/
+sql_app.db
+.env
+.pytest_cache

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: email-reply-api
+description: A Helm chart for Context Aware AI Email Reply API
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
