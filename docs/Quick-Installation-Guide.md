@@ -25,6 +25,7 @@ cat > .env << EOF
 OPENAI_API_KEY=your_openai_api_key_here
 OPENAI_MODEL=gpt-4o
 OPENAI_BASE_URL=https://api.openai.com/v1
+DATABASE_URL=postgresql://user:password@localhost:5432/emaildb
 EOF
 ```
 

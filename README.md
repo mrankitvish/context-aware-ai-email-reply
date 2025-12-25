@@ -108,6 +108,7 @@ sequenceDiagram
    OPENAI_API_KEY=your_openai_api_key
    OPENAI_MODEL=gpt-4o  # Optional, default: gpt-4o
    OPENAI_BASE_URL=https://api.openai.com/v1  # Optional
+   DATABASE_URL=postgresql://user:password@localhost:5432/emaildb
    ```
 
 ## Running the Application
