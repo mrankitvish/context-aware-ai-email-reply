@@ -10,6 +10,7 @@ import json
 class ReplyState(TypedDict):
     summary: dict
     tone: str
+    instructions: Optional[str]
     reply: Optional[str]
     quality_check_passed: bool
     retries: int
@@ -48,11 +49,12 @@ class ReplyGenerator:
     def generate_reply(self, state: ReplyState):
         summary = state["summary"]
         tone = state["tone"]
+        instructions = state.get("instructions")
         retries = state.get("retries", 0)
         
         # If retrying, maybe adjust prompt? For now, just retry.
         
-        prompt = ChatPromptTemplate.from_template("""
+        prompt_text = """
         You are a professional email assistant.
         
         CONTEXT:
@@ -70,9 +72,12 @@ class ReplyGenerator:
         - Write a {tone} email reply.
         - Address all questions.
         - Be specific and helpful.
+        """
         
-        REPLY:
-        """)
+        if instructions:
+            prompt_text += f"\n        - ADDITIONAL USER INSTRUCTIONS: {instructions}\n"
+            
+        prompt = ChatPromptTemplate.from_template(prompt_text)
         
         chain = prompt | self.llm | StrOutputParser()
         
@@ -131,10 +136,11 @@ class ReplyGenerator:
             
         return "retry"
 
-    def generate(self, summary: dict, tone: str = "professional") -> dict:
+    def generate(self, summary: dict, tone: str = "professional", instructions: Optional[str] = None) -> dict:
         initial_state = ReplyState(
             summary=summary,
             tone=tone,
+            instructions=instructions,
             reply=None,
             quality_check_passed=False,
             retries=0,

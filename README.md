@@ -147,7 +147,35 @@ Access the interactive Swagger UI at `http://localhost:8000/docs`.
   - Lists all email threads.
 
 - **Get Thread** (`GET /api/v1/threads/{thread_id}`)
+
   - Retrieves full details of a specific thread, including generated replies.
+
+- **Webhook - Process Raw Email** (`POST /api/v1/email/webhook`)
+  - **NEW**: Process raw email content with AI-powered parsing
+  - Intelligently extracts sender, subject, and body from various email formats
+  - Applies safety guardrails before and after parsing
+  - Returns complete email analysis and parsed data
+  - See [Webhook API Documentation](docs/WEBHOOK_API.md) for detailed usage
+
+## Frontend Application
+
+A modern Streamlit-based frontend is available for easy interaction:
+
+```bash
+# Install frontend dependencies
+pip install -r frontend/requirements.txt
+
+# Run the frontend
+streamlit run frontend/streamlit_app/main.py
+```
+
+The frontend provides:
+
+- **Submit Email**: Compose or paste emails for analysis
+- **Email Threads**: View and manage conversation threads
+- **History**: Browse all processed emails with filtering
+
+Access at `http://localhost:8501`
 
 ## Testing
 

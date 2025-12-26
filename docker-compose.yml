@@ -1,49 +1,69 @@
 version: '3.8'
 
 services:
-  api:
-    build: .
-    container_name: email-reply-api
-    ports:
-      - "8000:8000"
-    environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-https://api.openai.com/v1}
-      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o}
-      - DATABASE_URL=postgresql://user:password@db:5432/emaildb
-    env_file:
-      - .env
-    volumes:
-      - ./backend:/app/backend
-    depends_on:
-      db:
-        condition: service_healthy
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/')"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 5s
-
+  # PostgreSQL Database
   db:
     image: postgres:15-alpine
     container_name: email-reply-db
     environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=emaildb
-    ports:
-      - "5432:5432"
+      POSTGRES_USER: ${POSTGRES_USER:-emailuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-emailpass}
+      POSTGRES_DB: ${POSTGRES_DB:-emaildb}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d emaildb"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-emailuser}"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - email-network
+
+  # Backend API
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: email-reply-backend
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-emailuser}:${POSTGRES_PASSWORD:-emailpass}@db:5432/${POSTGRES_DB:-emaildb}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-https://api.openai.com/v1}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app/backend
+    networks:
+      - email-network
+    restart: unless-stopped
+
+  # Frontend (Streamlit)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: email-reply-frontend
+    environment:
+      - API_BASE_URL=http://backend:8000/api/v1
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend/streamlit_app:/app/streamlit_app
+    networks:
+      - email-network
     restart: unless-stopped
 
 volumes:
   postgres_data:
-    driver: local
+
+networks:
+  email-network:
+    driver: bridge

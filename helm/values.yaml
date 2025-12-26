@@ -1,0 +1,99 @@
+# Default values for context-aware-email-reply
+replicaCount: 1
+
+image:
+  backend:
+    repository: your-registry/email-reply-backend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  frontend:
+    repository: your-registry/email-reply-frontend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  backend:
+    type: ClusterIP
+    port: 8000
+  frontend:
+    type: LoadBalancer
+    port: 8501
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: email-reply.local
+      paths:
+        - path: /api
+          pathType: Prefix
+          backend: backend
+        - path: /
+          pathType: Prefix
+          backend: frontend
+  tls: []
+
+resources:
+  backend:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  frontend:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# PostgreSQL configuration
+postgresql:
+  enabled: true
+  auth:
+    username: emailuser
+    password: emailpass
+    database: emaildb
+  primary:
+    persistence:
+      enabled: true
+      size: 8Gi
+
+# Environment variables
+env:
+  openai:
+    apiKey: "" # Set via --set or secrets
+    model: "gpt-4o"
+    baseUrl: "https://api.openai.com/v1"
+  database:
+    url: "" # Auto-generated if postgresql.enabled=true

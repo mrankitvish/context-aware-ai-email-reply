@@ -1,0 +1,134 @@
+/* Modern Color Palette - Adaptive */
+:root {
+    /* Use Streamlit's variables where possible, or define adaptive ones if needed */
+    --primary-color: #4F46E5; 
+}
+
+/* Global Styles */
+.stApp {
+    /* Remove hardcoded background to let Streamlit handle theme */
+    font-family: 'Inter', sans-serif;
+}
+
+/* Card Style - Adaptive */
+.email-card {
+    background-color: var(--secondary-background-color); /* Streamlit variable */
+    color: var(--text-color); /* Streamlit variable */
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    margin-bottom: 1rem;
+    transition: box-shadow 0.2s;
+}
+
+.email-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.email-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+    padding-bottom: 0.5rem;
+}
+
+.email-sender {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.email-date {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 0.875rem;
+}
+
+.email-subject {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.email-body {
+    color: var(--text-color);
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+/* Reply Section - Adaptive */
+.reply-section {
+    background-color: rgba(16, 185, 129, 0.1); /* Transparent green */
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 1rem;
+    color: var(--text-color);
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-replied {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: #065F46;
+}
+@media (prefers-color-scheme: dark) {
+    .status-replied {
+        color: #D1FAE5;
+    }
+}
+
+.status-pending {
+    background-color: rgba(245, 158, 11, 0.2);
+    color: #92400E;
+}
+@media (prefers-color-scheme: dark) {
+    .status-pending {
+        color: #FEF3C7;
+    }
+}
+
+/* Hero Section - Keep as is, text is always white on gradient */
+.hero-section {
+    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    color: white;
+    padding: 3rem 2rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    text-align: center;
+}
+
+.hero-title {
+    font-size: 3rem !important;
+    font-weight: 800 !important;
+    color: white !important;
+    margin-bottom: 1rem !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Chat Input Styling - Removed for Dashboard Layout */
+/* .stChatInput { ... } */
+
+/* Dashboard Specifics */
+div[data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlock"] {
+    gap: 1rem;
+}
+
+

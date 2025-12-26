@@ -1,0 +1,14 @@
+apiVersion: v2
+name: context-aware-email-reply
+description: AI-powered email reply system with context awareness and safety guardrails
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - ai
+  - email
+  - automation
+  - nlp
+maintainers:
+  - name: Your Name
+    email: your.email@example.com

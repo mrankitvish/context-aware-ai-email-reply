@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "context-aware-email-reply.fullname" . }}-backend
+  labels:
+    app: {{ include "context-aware-email-reply.name" . }}-backend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "context-aware-email-reply.name" . }}-backend
+  template:
+    metadata:
+      labels:
+        app: {{ include "context-aware-email-reply.name" . }}-backend
+    spec:
+      containers:
+      - name: backend
+        image: "{{ .Values.image.backend.repository }}:{{ .Values.image.backend.tag }}"
+        imagePullPolicy: {{ .Values.image.backend.pullPolicy }}
+        ports:
+        - containerPort: 8000
+          name: http
+        env:
+        - name: DATABASE_URL
+          value: {{ .Values.env.database.url | default (printf "postgresql://%s:%s@%s-postgresql:5432/%s" .Values.postgresql.auth.username .Values.postgresql.auth.password (include "context-aware-email-reply.fullname" .) .Values.postgresql.auth.database) }}
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "context-aware-email-reply.fullname" . }}-secrets
+              key: openai-api-key
+        - name: OPENAI_MODEL
+          value: {{ .Values.env.openai.model }}
+        - name: OPENAI_BASE_URL
+          value: {{ .Values.env.openai.baseUrl }}
+        resources:
+          {{- toYaml .Values.resources.backend | nindent 12 }}
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "context-aware-email-reply.fullname" . }}-frontend
+  labels:
+    app: {{ include "context-aware-email-reply.name" . }}-frontend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "context-aware-email-reply.name" . }}-frontend
+  template:
+    metadata:
+      labels:
+        app: {{ include "context-aware-email-reply.name" . }}-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: "{{ .Values.image.frontend.repository }}:{{ .Values.image.frontend.tag }}"
+        imagePullPolicy: {{ .Values.image.frontend.pullPolicy }}
+        ports:
+        - containerPort: 8501
+          name: http
+        env:
+        - name: API_BASE_URL
+          value: "http://{{ include "context-aware-email-reply.fullname" . }}-backend:8000/api/v1"
+        resources:
+          {{- toYaml .Values.resources.frontend | nindent 12 }}

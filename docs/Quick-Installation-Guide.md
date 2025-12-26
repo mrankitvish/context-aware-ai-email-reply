@@ -32,7 +32,8 @@ EOF
 ### 3. Start with Docker Compose
 
 ```bash
-docker-compose up -d
+docker compose build
+docker compose up -d
 ```
 
 The API will be available at `http://localhost:8000`.
