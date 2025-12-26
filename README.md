@@ -14,6 +14,13 @@ This tool uses AI to generate professional, context-aware email replies in secon
 - [**How-to Guide**](docs/How-to-Guide.md): Detailed API usage instructions.
 - [**Advanced Configuration**](docs/Advanced-Configuration-Guide.md): LLM setup, Docker, and Helm configuration.
 
+## Recent Changes (v1.1.0)
+
+- **New Webhook Endpoint**: Added `/api/v1/email/webhook` for processing raw email content with AI parsing.
+- **Unified Deployment**: Consolidated frontend and backend into a single Helm chart for easier Kubernetes deployment.
+- **Docker Restructuring**: Moved Dockerfiles to root (`Dockerfile.backend`, `Dockerfile.frontend`) for better build context management.
+- **Documentation**: Updated guides with webhook usage and deployment instructions.
+
 ## Architecture
 
 ```mermaid
